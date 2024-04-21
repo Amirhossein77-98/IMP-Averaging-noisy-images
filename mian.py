@@ -31,6 +31,24 @@ def add_salt_and_pepper_noise(image, amount):
     noisy_image = np.unit8(image_float * 255)
     return noisy_image
 
+def calculate_average_and_variance(image):
+    """
+    Calculates average and variance for an image.
+    :param image: Input image
+    :return: Average and variance
+    """
+    # Computes the total number of pixels in the image.
+    # image.shape[0] gives the height (number of rows), and image.shape[1] gives the width (number of columns).
+    total_pixels = image.shape[0] * image.shape[1]
+
+    # Computes the average pixel value (mean) for the entire image.
+    average_value = np.sum(image) / total_pixels
+    # Computes the sum of squared differences between each pixel value and the average.
+    squared_diff_sum = np.sum((image - average_value) ** 2)
+    # Computes the variance of pixel values in the image.
+    variance_value = squared_diff_sum / total_pixels
+    return average_value, variance_value
+
 # Create directories to save noisy samples and results
 os.makedirs("noisy_samples", exist_ok=True)
 os.makedirs("result", exist_ok=True)
@@ -40,3 +58,13 @@ samples = 500
 for i in range(samples):
     noise_amount = np.random.uniform(0.01, 0.05)
     noisy_samples = add_salt_and_pepper_noise(image, amount=noise_amount)
+    cv2.imwrite(f"noisy_samples/noisy_sample_{i}.jpg", noisy_samples)
+
+# Select sample groups and calculate statistics
+sample_sizes = [1, 5, 10, 50, 100, 500]
+results = []
+
+for k in sample_sizes:
+    selected_samples = [cv2.imread(f"noisy_samples/noisy_sample_{i}.jpg", cv2.IMREAD_GRAYSCALE) for i in range(k)]
+    avg, var = calculate_average_and_variance(np.mean(selected_samples, axis=0)) # The parameter is based on this formula: (\bar{g}(x, y) = -\frac{1}{k} \sum_{i=1}^{k} g_i(x, y))
+    results.append((k, avg, var))
