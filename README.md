@@ -17,6 +17,7 @@ This project is an implementation of an Image Processing class exercise focused 
 - OpenCV
 - NumPy
 - ReportLab
+- PyPDF2
 
 The specific package versions required are listed in the `requirements.txt` file.
 
