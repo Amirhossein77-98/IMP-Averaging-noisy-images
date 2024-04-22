@@ -1,3 +1,29 @@
+"""
+Image Denoising Through Averaging
+
+This script implements an image denoising technique based on averaging multiple noisy samples of an input image.
+It follows these steps:
+
+Read an input image.
+Generate a specified number of noisy samples by adding salt-and-pepper noise to the input image.
+For different sample group sizes (1, 5, 10, 50, 100, 500):
+a. Select the corresponding number of noisy samples from the generated set.
+b. Calculate the average and variance of the selected samples using the formulas: Average (Expected Value): E[g(x, y)] = f(x, y) Variance: σ²g(x, y) = (1/k) * σ²η(x, y)
+c. Save the averaged result as an image.
+Store the sample group sizes, averages, and average variances in a CSV file.
+This implementation follows the formulas and concepts from image denoising through averaging, as discussed in image processing literature.
+
+References:
+
+- A powerpoint provided by Dr. Kamangar
+- docs.opencv.org
+- machinelearningknowledge.ai
+- geeksforgeeks.org
+- stackoverslow.com
+- some youtube guys
+- copilot.microsoft.com
+- claude.ai """
+
 import cv2
 import numpy as np
 import os
@@ -64,7 +90,26 @@ for i in range(samples):
 sample_sizes = [1, 5, 10, 50, 100, 500]
 results = []
 
+# For each value of k (sample group size), perform the following steps.
 for k in sample_sizes:
+    #Read the corresponding number of noisy samples (based on k). Each sample is loaded as a grayscale image.
     selected_samples = [cv2.imread(f"noisy_samples/noisy_sample_{i}.jpg", cv2.IMREAD_GRAYSCALE) for i in range(k)]
+    # Calculate the average and variance for this group of noisy samples.
+    # The average and variance are based on the provided formula: (\bar{g}(x, y) = -\frac{1}{k} \sum_{i=1}^{k} g_i(x, y
     avg, var = calculate_average_and_variance(np.mean(selected_samples, axis=0)) # The parameter is based on this formula: (\bar{g}(x, y) = -\frac{1}{k} \sum_{i=1}^{k} g_i(x, y))
     results.append((k, avg, var))
+
+    # Create resulting image for this sample group by averaging the selected samples
+    resulting_image = np.mean(selected_samples, axis=0)
+    cv2.imwrite(f"result/result_for_{k}_samples.jpg", resulting_image)
+
+# Save results to a csv file
+csv_filename = "result/results.csv"
+# Write the sample group size, average, and average variance for each group.
+with open(csv_filename, "w", newline="") as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(["Sample Groups", "Average", "Average Variance"])
+    for row in results:
+        writer.writerow(row)
+
+print(f"Results saved to {csv_filename}")
