@@ -47,7 +47,7 @@ def main() -> None:
     samples = 500
     print(f"Generating {samples} noisy images...")
     for i in range(samples):
-        noise_amount = np.random.uniform(0.01, 0.1)
+        noise_amount = np.random.uniform(0.01, 0.5)
         noisy_samples = add_salt_and_pepper_noise(image, amount=noise_amount)
         cv2.imwrite(f"noisy_samples/noisy_sample_{i}.jpg", noisy_samples)
 
