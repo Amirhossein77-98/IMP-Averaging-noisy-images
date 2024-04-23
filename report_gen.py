@@ -4,7 +4,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 import csv
 
-def add_snapshot():
+def add_snapshot() -> None:
     from PyPDF2 import PdfReader, PdfWriter
     # Open the existing PDF
     existing_pdf = PdfReader("result/report.pdf")
@@ -54,18 +54,14 @@ def generate_pdf_report(samples) -> None:
     # Add the original image with title
     original_image = Image("original.jpg", width=3.5*inch, height=4*inch)
     elements.append(Paragraph("Author: Amirhossein Gholizadeh"))
-    elements.append(Paragraph("Student Num: 4021119008"))
     elements.append(Paragraph("Course: Image Processing"))
     elements.append(Paragraph("Chapter: 2"))
     elements.append(Paragraph("Original Image", title_style))
     elements.append(original_image)
 
-    # Add a spacer for bottom margin
-    #elements.append(Spacer(0, 1*inch))
-
     # Add the denoised images with titles
     image_files = [f"result/result_for_{i}_samples.jpg" for i in samples]
-    titles = ["k=1", "k=5", "k=10", "k=20", "k=50", "k=100"]
+    titles = ["k=1", "k=5", "k=10", "k=50", "k=100", "k=500"]
     table_data = []
     for i in range(0, len(image_files), 3):
         # Create a new row for the table
